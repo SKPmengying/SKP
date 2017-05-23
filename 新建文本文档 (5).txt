@@ -1,0 +1,17 @@
+#!/bin/bash
+backupcode="/data/backcode/$JOB_NAME/$BUILD_NUMBER"
+rollcode="/data/backcode/$JOB_NAME"
+mkdir -p $backupcode
+rsync -acP   "$JENKINS_HOME"/workspace/"$JOB_NAME"/*  $backupcode
+
+
+#chown -R nginx.nginx "$JENKINS_HOME"/workspace/"$JOB_NAME"/
+if [ "$rollback" -gt "0" ]; then
+rsync -acP "$rollcode"/"$rollback"/*   "$JENKINS_HOME"/workspace/"$JOB_NAME"/
+rsync -acP   "$JENKINS_HOME"/workspace/"$JOB_NAME"/*   /data/html/
+fi
+
+if [ "$rollback" -eq "0" ]; then 
+rsync -acP   "$JENKINS_HOME"/workspace/"$JOB_NAME"/*   /data/html/
+fi
+chown -R nginx.nginx /data/html/
